@@ -1,0 +1,6 @@
+Flask==2.2.5
+Flask-SQLAlchemy==3.0.5
+Flask-Mail==0.9.1
+Flask-SocketIO==5.4.1
+mysql-connector-python==8.0.33
+pytz==2024.1

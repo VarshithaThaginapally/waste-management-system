@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waste Collection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f4f8;
+        }
+        .header {
+            background-color: #333;
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+        .header h1 {
+            display: inline;
+            font-size: 24px;
+            margin: 0;
+        }
+        nav {
+            display: inline;
+            float: right;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+        .container h2 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        form input, form textarea, form button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        form button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        form button:hover {
+            background-color: #0056b3;
+        }
+        .footer {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+        .flash {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        .flash.success {
+            background-color: #d7f8e0;
+            color: #1c724a;
+            border: 1px solid #c6f5d7;
+        }
+        .flash.danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .flash.info {
+            background-color: #cce5ff;
+            color: #004085;
+            border: 1px solid #b8daff;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Waste Management</h1>
+        <nav>
+            <a href="{{ url_for('home') }}">Home</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
+        </nav>
+    </div>
+    <div class="container">
+        <h2>Waste Collection</h2>
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+       {% endwith %}
+            {% if collection_requests %}
+                {% for request in collection_requests %}
+                    <div class="request">
+                        <p><strong>Collector Name:</strong> {{ request[1] }}</p>
+                    <p><strong>Collector Email:</strong> {{ request[2] }}</p>
+                    <p><strong>Waste Type:</strong> {{ request[3] }}</p>
+                    <p><strong>Quantity:</strong> {{ request[4] }}</p>
+                    <p><strong>Collection Date:</strong> {{ request[5] }}</p>
+                    <p><strong>Collection Time:</strong> {{ request[6] }}</p>
+                    <p><strong>Address:</strong> {{ request[7] }}</p>
+                    <!-- Delete button form -->
+                    <form action="{{ url_for('delete_request', request_id=request[0]) }}" method="post" style="display: inline;">
+                        <button type="submit" class="delete-button">Delete</button>
+                    </form>
+                    <hr>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No collection requests found.</p>
+            {% endif %}
+        </div>
+    </div>
+    <div class="footer">
+        <p>&copy; 2024 Waste Management System | All rights reserved.</p>
+    </div>
+</body>
+</html>
+

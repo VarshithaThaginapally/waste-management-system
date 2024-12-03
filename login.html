@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waste Management System - Login</title>
+    <style>
+        body {
+            background-image: url('/static/images/city_background.jpg');
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            width: 300px;
+            text-align: center;
+        }
+        h2 {
+            font-size: 24px;
+            color: #333;
+        }
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .link {
+            margin-top: 10px;
+            display: block;
+            color: #333;
+            text-decoration: none;
+        }
+        .flash {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        .flash.danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .flash.info {
+            background-color: #cce5ff;
+            color: #004085;
+            border: 1px solid #b8daff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Waste Management System</h2>
+         <!-- Flash Messages -->
+         {% with messages = get_flashed_messages(with_categories=true) %}
+         {% if messages %}
+             {% for category, message in messages %}
+                 <div class="flash {{ category }}">{{ message }}</div>
+             {% endfor %}
+         {% endif %}
+        {% endwith %}
+        <form action="/login" method="post">
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">Sign In</button>
+            <a href="/register" class="link">Don't have an account? Register here</a>
+            <a href="/admin_login" class="link">Admin Login</a>
+        </form>
+    </div>
+</body>
+</html>

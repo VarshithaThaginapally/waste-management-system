@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request Collection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f4f8;
+        }
+        .header {
+            background-color: #333;
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+        .header h1 {
+            display: inline;
+            font-size: 24px;
+            margin: 0;
+        }
+        nav {
+            display: inline;
+            float: right;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+        .container h2 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        form input, form textarea, form button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        form button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        form button:hover {
+            background-color: #0056b3;
+        }
+        .footer {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+        .flash {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        .flash.success {
+            background-color: #d7f8e0;
+            color: #1c724a;
+            border: 1px solid #c6f5d7;
+        }
+        .flash.danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .flash.info {
+            background-color: #cce5ff;
+            color: #004085;
+            border: 1px solid #b8daff;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Waste Management</h1>
+        <nav>
+            <a href="{{ url_for('home') }}">Home</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
+        </nav>
+    </div>
+    <div class="container">
+        <h2>Request Collection</h2>
+        <p>Submit a request for waste collection from your location. Please fill out the details below:</p>
+         <!-- Flash Messages -->
+         {% with messages = get_flashed_messages(with_categories=true) %}
+         {% if messages %}
+             {% for category, message in messages %}
+                 <div class="flash {{ category }}">{{ message }}</div>
+             {% endfor %}
+         {% endif %}
+        {% endwith %}
+        <form action="{{ url_for('request_collection') }}" method="post">
+            <label for="collector_name">Collector Name:</label>
+            <input type="text" id="collector_name" name="collector_name" required>
+
+            <label for="collector_email">Collector Email:</label>
+            <input type="email" id="collector_email" name="collector_email" required>
+
+            <label for="waste_type">Waste Type:</label>
+            <input type="text" id="waste_type" name="waste_type" required>
+
+            <label for="quantity">Quantity:</label>
+            <input type="number" id="quantity" name="quantity" required min="1" placeholder="Enter quantity in kg or liters">
+
+            <label for="collection_date">Collection Date:</label>
+            <input type="date" id="collection_date" name="collection_date" required>
+
+            <label for="collection_time">Collection Time:</label>
+            <input type="time" id="collection_time" name="collection_time" required>
+
+            <label for="address">Address:</label>
+            <textarea id="address" name="address" rows="3" required></textarea>
+
+            <button type="submit">Submit Request</button>
+        </form>
+    </div>
+    <div class="footer">
+        <p>&copy; 2024 Waste Management System | All rights reserved.</p>
+    </div>
+</body>
+</html>

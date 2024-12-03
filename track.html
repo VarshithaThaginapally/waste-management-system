@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Tracking</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="header">
+        <h1>Waste Management</h1>
+        <nav>
+            <a href="{{ url_for('admin_dashboard') }}">Admin Dashboard</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
+        </nav>
+    </div>
+    <div class="container">
+        <h2>Track Waste Collection Vehicles</h2>
+        <div id="map" style="height: 400px; margin: 20px 0;"></div>
+    </div>
+    <div class="footer">
+        <p>&copy; 2024 Waste Management System | All rights reserved.</p>
+    </div>
+
+    <!-- Leaflet JS and Socket.IO -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.0/socket.io.min.js"></script>
+
+    <script>
+        const city = "Hyderabad"; // Default city
+        const area = "Banjara Hills"; // Default area for demonstration
+
+        // Initialize the map
+        const map = L.map('map').setView([17.4128, 78.4316], 15);
+
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Vehicle marker
+        let vehicleMarker = null;
+
+        // Connect to Socket.IO
+        const socket = io();
+
+        // Request vehicle updates
+        socket.emit("request_vehicle_update", { city, area });
+
+        // Listen for updates
+        socket.on("vehicle_update", (data) => {
+            if (data.city === city && data.area === area) {
+                const { lat, lng } = data.position;
+
+                // Update the marker position
+                if (vehicleMarker) {
+                    vehicleMarker.setLatLng([lat, lng]);
+                } else {
+                    vehicleMarker = L.marker([lat, lng]).addTo(map);
+                }
+
+                // Center the map on the marker
+                map.setView([lat, lng]);
+            }
+        });
+
+        // Periodically request updates
+        setInterval(() => {
+            socket.emit("request_vehicle_update", { city, area });
+        }, 3000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waste Collection Routes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f4f8;
+        }
+
+        .header {
+            background-color: #333;
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin: 0;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        h2, h3 {
+            text-align: center;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+
+        .form-container {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        select, button {
+            padding: 10px;
+            margin: 5px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+
+        .area-container {
+            background-color: #ffffff;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .area-header {
+            cursor: pointer;
+            padding: 10px;
+            background-color: #c6c5c5;
+            color: white;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .area-header:hover {
+            background-color: #c6c5c5;
+        }
+
+        .area-name {
+            font-weight: bold;
+        }
+
+        .arrow {
+            font-size: 16px;
+            transition: transform 0.3s ease;
+        }
+
+        .route-details {
+            display: none;
+            margin-top: 10px;
+            padding-left: 10px;
+        }
+
+        .route-details ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .route-details li {
+            background-color: #f9f9f9;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .route-details li strong {
+            color: #333;
+        }
+
+        .route-details li em {
+            font-style: normal;
+            color: #555;
+        }
+
+        .route-path {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .route-path span {
+            padding: 5px 10px;
+            margin: 0 5px;
+            background-color: #c9c8c8;
+            color: white;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .arrow-symbol {
+            font-size: 18px;
+            color: #333;
+        }
+
+        .footer {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Waste Management</h1>
+        <nav>
+            <a href="{{ url_for('home') }}">Home</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
+        </nav>
+    </div>
+
+    <div class="container">
+        <h2>Select a City to view Waste Collection Routes</h2>
+        <!-- City selection form -->
+        <div class="form-container">
+            <form action="{{ url_for('select_area') }}" method="GET">
+                <label for="city">Select City:</label>
+                <select name="city" id="city" required>
+                    <option value="Hyderabad" {% if city == 'Hyderabad' %}selected{% endif %}>Hyderabad</option>
+                    <option value="Lucknow" {% if city == 'Lucknow' %}selected{% endif %}>Lucknow</option>
+                    <option value="Bangalore" {% if city == 'Bangalore' %}selected{% endif %}>Bangalore</option>
+                    <!-- Add more cities as needed -->
+                </select>
+                <button type="submit">Select City</button>
+            </form>
+        </div>
+
+        {% if city %}
+            <h3>Select an Area in {{ city }}:</h3>
+            {% for area in areas %}
+                <div class="area-container">
+                    <div class="area-header" onclick="toggleDetails('{{ area }}')">
+                        <span class="area-name">{{ area }}</span>
+                        <span class="arrow">&#9660;</span>  <!-- Downward arrow -->
+                    </div>
+
+                    <div class="route-details" id="{{ area }}" style="display:none;">
+                        <ul>
+                            {% for route in route_info[city][area] %}
+                                <li>
+                                    <strong>{{ route.route_name }}</strong><br>
+                                    <em>{{ route.collection_time }}</em><br>
+                                    <div class="route-path">
+                                        {% for place in route.route_places %}
+                                            <span>{{ place }}</span>
+                                            {% if not loop.last %}
+                                                <span class="arrow-symbol">&#8594;</span> <!-- Right arrow -->
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <script>
+        function toggleDetails(area) {
+            var element = document.getElementById(area);
+            var arrow = element.previousElementSibling.querySelector(".arrow");
+
+            if (element.style.display === "none") {
+                element.style.display = "block";  // Show the details
+                arrow.innerHTML = "&#9650;";     // Change arrow to up (▲)
+            } else {
+                element.style.display = "none";  // Hide the details
+                arrow.innerHTML = "&#9660;";     // Change arrow to down (▼)
+            }
+        }
+    </script>
+
+    <div class="footer">
+        <p>&copy; 2024 Waste Management System | All rights reserved.</p>
+    </div>
+</body>
+</html>
